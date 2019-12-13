@@ -1,0 +1,47 @@
+import spotipy
+import spotipy.util as util
+import requests
+import json
+username='o1yhtxht6ke0a1w7a694q827p'
+def list_playlists(x, y,):
+    number = -1
+    for i in results['items']:
+        number += 1
+        print(number,results['items'][number]['name'])
+    playlist = int(input("select playlist"))
+    return playlist
+def list_songs(results, playlist, number, numreal, offset):
+    while number == 99:
+        trackrequest = requests.get('http://api.spotify.com/v1/users/'+username+'/playlists/'+results['items'][playlist]['id']+'/tracks', params = {'offset' : offset},  headers = {"Content-Type":"application/json", 'Authorization':"Bearer "+token})
+        playresult = trackrequest.json()
+        number = -1
+        offset += 100
+        for i in playresult['items']:
+            number += 1
+            numreal += 1
+            print(numreal, playresult['items'][number]['track']['name'] + ' - ' + playresult['items'][number]['track']['album']['artists'][0]['name'])
+while True:
+    try:
+        '''
+        print('1. List songs \n2. Play a song')
+        select = str(input('What do you want to do? '))
+        result = []
+        if select == '1':'''
+        token = util.prompt_for_user_token(
+        username='o1yhtxht6ke0a1w7a694q827p',
+        client_id='e8dbcc7f50054ea3ad7e8b1e4ea4d598',
+        scope='user-library-read playlist-modify-private',
+        client_secret='8b14b44b1b31421699e278c82fae208f',
+        redirect_uri='https://www.google.com/')
+        sp = spotipy.Spotify(auth=token)
+        request = requests.get('https://api.spotify.com/v1/me/playlists' , headers = {'Authorization': 'Bearer ' + token})
+        results = request.json()
+        playlist = list_playlists(request, results)
+        number = 99
+        offset = 0
+        numreal = 0
+        print('-------------------------------------------------------------------------------------------------------------')
+        list_songs(results, playlist, number, numreal, offset)
+        print('-------------------------------------------------------------------------------------------------------------')
+    except:
+        print('uh oh. Something has gone wrong.')
